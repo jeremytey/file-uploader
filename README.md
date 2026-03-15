@@ -58,7 +58,7 @@ cd file-uploader
 ### 2. Install dependencies
 
 ```bash
-npm install express ejs prisma @prisma/client passport passport-local bcrypt multer cloudinary connect-pg-simple express-session express-validator uuid
+npm install express ejs prisma @prisma/client passport passport-local bcrypt multer cloudinary connect-pg-simple express-session express-validator uuid method-override
 npm install --save-dev nodemon
 ```
 
