@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Drive — FileVault</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">filevault/</a>
+    <div class="nav-links">
+      <span style="font-size:0.85rem; color:var(--muted); margin-right:0.5rem;">
+        <%= user.username %>
+      </span>
+      <form action="/logout" method="POST" style="margin:0;">
+        <button type="submit" class="btn btn-ghost btn-sm">Log out</button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="toolbar">
+      <h2 class="page-title" style="margin:0; border:none;">My Drive</h2>
+    </div>
+
+    <% if (locals.message) { %>
+      <div class="alert alert-error"><%= message %></div>
+    <% } %>
+
+    <% if (locals.link) { %>
+      <div class="alert alert-success">
+        Share link generated:
+        <div class="share-link-box" style="margin-top:0.5rem;">
+          <span><%= link %></span>
+          <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText('<%= link %>')">Copy</button>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Create Folder Form -->
+    <div class="card" style="margin-bottom:2rem;">
+      <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem;">New Folder</p>
+      <form action="/folders" method="POST" style="display:flex; gap:0.5rem;">
+        <input type="text" name="name" placeholder="Folder name" required style="flex:1;" />
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+    </div>
+
+    <!-- Folder List -->
+    <% if (folders.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">📁</div>
+        <p>No folders yet. Create one above.</p>
+      </div>
+    <% } else { %>
+      <ul class="item-list">
+        <% folders.forEach(folder => { %>
+          <li class="item-row">
+            <span class="item-icon">📁</span>
+            <a href="/folders/<%= folder.id %>" class="item-name"><%= folder.name %></a>
+            <span class="item-meta"><%= new Date(folder.createdAt).toLocaleDateString() %></span>
+            <div class="item-actions">
+              <form action="/folders/<%= folder.id %>?_method=DELETE" method="POST" style="margin:0;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('Delete folder and all its files?')">Delete</button>
+              </form>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+
+</body>
+</html>
