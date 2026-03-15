@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
 app.use('/', authRouter);
 app.use('/files', fileRouter);
-app.use('/folders', folderRouter);
+app.use('/', folderRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
