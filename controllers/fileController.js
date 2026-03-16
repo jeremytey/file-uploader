@@ -11,7 +11,9 @@ exports.uploadFile = async (req, res) => {
     const fileSize = req.file.size;
     const mimeType = req.file.mimetype;
     const fileData = req.file.buffer;
-    
+    console.log('mimetype:', req.file?.mimetype);
+console.log('size:', req.file?.size);
+console.log('buffer exists:', !!req.file?.buffer);
     
     if (!fileData || mimeType !== 'application/pdf' || fileSize > 10 * 1024 * 1024){
         return res.status(400).send('Invalid file. Only PDF files under 10MB are allowed.');
@@ -36,6 +38,7 @@ exports.uploadFile = async (req, res) => {
         res.redirect(`/folders/${folderId}`);
     }
     catch (err) {
+        console.error(err);
         res.status(400).send('Unable to perform operation');
     }
 }

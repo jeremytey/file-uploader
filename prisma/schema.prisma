@@ -9,7 +9,7 @@ datasource db {
 model User {
   id       Int   @id @default(autoincrement())
   username String @unique
-  password_hash String
+  passwordHash String
   createdAt DateTime @default(now())
   folders  Folder[]
     files    File[] 
@@ -46,4 +46,11 @@ model SharedLink {
     expiresAt DateTime
     createdAt DateTime @default(now())
     folder Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }

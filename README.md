@@ -2,6 +2,7 @@
 
 A simplified Google Drive clone built with Node.js, Express, Prisma ORM, PostgreSQL, Passport.js, Multer, and Cloudinary. Features session-based authentication, folder management, file uploads with cloud storage, and public folder sharing via time-limited links.
 
+---
 
 ## Tech Stack
 
@@ -13,6 +14,7 @@ A simplified Google Drive clone built with Node.js, Express, Prisma ORM, Postgre
 - **Cloudinary** — cloud file storage
 - **Render** — deployment platform
 
+---
 
 ## Directory Structure
 
@@ -37,6 +39,8 @@ file-uploader/
 │   └── folderRouter.js
 ├── prisma/
 │   └── schema.prisma
+├── public/
+│   └── style.css
 └── views/
     ├── login.ejs
     ├── signUp.ejs
@@ -45,6 +49,7 @@ file-uploader/
     └── fileDetails.ejs
 ```
 
+---
 
 ## Setup & Installation
 
@@ -58,7 +63,7 @@ cd file-uploader
 ### 2. Install dependencies
 
 ```bash
-npm install express ejs prisma @prisma/client passport passport-local bcrypt multer cloudinary connect-pg-simple express-session express-validator uuid method-override
+npm install express ejs prisma @prisma/client passport passport-local bcrypt multer cloudinary connect-pg-simple express-session express-validator uuid method-override @quixo3/prisma-session-store dotenv
 npm install --save-dev nodemon
 ```
 
@@ -67,7 +72,7 @@ npm install --save-dev nodemon
 Create a `.env` file in the root directory:
 
 ```
-DATABASE_URL=postgresql://user:password@localhost:5432/fileuploader
+DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/fileuploader
 SESSION_SECRET=your_session_secret
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
@@ -75,14 +80,31 @@ CLOUDINARY_API_SECRET=your_api_secret
 NODE_ENV=development
 ```
 
-### 4. Set up the database
+### 4. Create the PostgreSQL database
+
+> Prisma manages your tables but cannot create the database itself. You must create it manually first.
+
+**Option A — via terminal:**
+```bash
+psql -U postgres -c "CREATE DATABASE fileuploader;"
+```
+
+**Option B — via pgAdmin (Windows GUI):**
+1. Open pgAdmin
+2. Connect to your local PostgreSQL server
+3. Right-click Databases → Create → Database
+4. Name it `fileuploader` → Save
+
+### 5. Run database migrations
 
 ```bash
 npx prisma migrate dev --name init
 npx prisma generate
 ```
 
-### 5. Run the application
+This creates all tables (`User`, `Folder`, `File`, `SharedLink`) inside the `fileuploader` database.
+
+### 6. Run the application
 
 ```bash
 npm run dev
@@ -106,13 +128,16 @@ npm run dev
 ### Auth
 | Method | Route | Description |
 |--------|-------|-------------|
+| GET | /signup | Signup form |
 | POST | /signup | Register a new user |
+| GET | /login | Login form |
 | POST | /login | Log in |
 | POST | /logout | Log out |
 
 ### Folders
 | Method | Route | Description |
 |--------|-------|-------------|
+| GET | / | Home — list all folders |
 | POST | /folders | Create a folder |
 | GET | /folders/:id | View folder contents |
 | PATCH | /folders/:id | Rename a folder |
@@ -122,9 +147,9 @@ npm run dev
 ### Files
 | Method | Route | Description |
 |--------|-------|-------------|
-| POST | /files/upload | Upload a file to a folder |
+| POST | /files/upload/:folderId | Upload a file to a folder |
 | GET | /files/:id | View file details |
-| GET | /files/:id/download | Download a file |
+| GET | /files/download/:id | Download a file |
 
 ### Share
 | Method | Route | Description |
@@ -137,9 +162,10 @@ npm run dev
 
 1. Create a new Web Service on Render
 2. Connect your GitHub repository
-3. Set all environment variables in the Render dashboard
-4. Build command: `npm install && npx prisma migrate deploy`
-5. Start command: `node app.js`
+3. Add a PostgreSQL database on Render and copy the connection string to `DATABASE_URL`
+4. Set all environment variables in the Render dashboard
+5. Build command: `npm install && npx prisma migrate deploy`
+6. Start command: `node app.js`
 
 ---
 
@@ -151,5 +177,7 @@ node_modules/
 .DS_Store
 *.log
 ```
+
+---
 
 Built by Jeremy | The Odin Project — NodeJS Course
