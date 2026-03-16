@@ -5,6 +5,7 @@ const app = express();
 const authRouter = require('./routes/authRouter');
 const fileRouter = require('./routes/fileRouter');
 const folderRouter = require('./routes/folderRouter');
+const folderController = require('./controllers/folderController');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const passport = require('passport');
@@ -29,14 +30,14 @@ app.use(session({
         dbRecordIdIsSessionId: true,
     }),
 }));
-app.get('/share/:token', folderController.getSharedFolder);
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     next();
 });
-
+app.get('/share/:token', folderController.getSharedFolder);
 app.use('/', authRouter);
 app.use('/files', fileRouter);
 app.use('/', folderRouter);
